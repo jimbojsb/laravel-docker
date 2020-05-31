@@ -1,37 +1,7 @@
-# PHP Extensions: Patched Xdebug
-FROM ubuntu:20.04 AS phpext
-RUN apt-get update \
-    && apt-get install -yq --no-install-recommends software-properties-common \
-    && add-apt-repository ppa:ondrej/php \
-    && apt-get update \
-    && apt-get install -yq \
-        pkg-config \
-        php7.4-dev \
-        git
-WORKDIR /root
-RUN git clone https://github.com/jimbojsb/xdebug.git
-WORKDIR /root/xdebug
-RUN phpize && ./configure && make
+FROM ubuntu:20.04 AS base
 
-FROM ubuntu:20.04
-
-ENV PATH $PATH:/app/vendor/bin:/app:/app/node_modules/.bin
-ENV COMPOSER_ALLOW_SUPERUSER 1
-ENV APP_ENV production
-ENV APP_NAME laravel
-ENV FPM_MEMORY_LIMIT 128M
-ENV FPM_UPLOAD_MAX_FILESIZE 10M
-ENV FPM_POST_MAX_SIZE 10M
 ENV LC_ALL=C.UTF-8
 ENV DEBIAN_FRONTEND=noninteractive
-
-VOLUME /app/storage/framework
-VOLUME /app/storage/debugbar
-
-EXPOSE 80
-
-ENTRYPOINT ["/usr/local/bin/entrypoint"]
-CMD ["/usr/local/bin/web"]
 
 COPY bin/ /usr/local/bin/
 
@@ -63,6 +33,35 @@ RUN add-apt-repository ppa:ondrej/php \
         php7.4-soap \
         php7.4-intl \
         php7.4-redis
+
+# PHP Extensions: Patched Xdebug
+FROM base AS phpext
+RUN install_clean \
+        pkg-config \
+        build-essential \
+        php7.4-dev
+WORKDIR /root
+RUN git clone https://github.com/jimbojsb/xdebug.git
+WORKDIR /root/xdebug
+RUN phpize && ./configure && make -j6
+
+FROM base
+
+ENV PATH $PATH:/app/vendor/bin:/app:/app/node_modules/.bin
+ENV COMPOSER_ALLOW_SUPERUSER 1
+ENV APP_ENV production
+ENV APP_NAME laravel
+ENV FPM_MEMORY_LIMIT 128M
+ENV FPM_UPLOAD_MAX_FILESIZE 10M
+ENV FPM_POST_MAX_SIZE 10M
+
+VOLUME /app/storage/framework
+VOLUME /app/storage/debugbar
+
+EXPOSE 80
+
+ENTRYPOINT ["/usr/local/bin/entrypoint"]
+CMD ["/usr/local/bin/web"]
 
 COPY etc/ /etc/
 COPY root/ /root/
