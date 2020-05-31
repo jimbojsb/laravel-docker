@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+if [ "$APP_ENV" == "production" ]; then
+    if [ -f /app/artisan ]; then
+        artisan config:cache -q
+    fi
+fi
+
+if [ "$APP_ENV" == "local" ]; then
+    ln -s /etc/php7/xdebug.ini /etc/php7/conf.d/00-xdebug.ini
+    ln -s /etc/php7/opcache-blacklist /etc/php7/opcache-blacklist.enabled
+    if [ -f /app/artisan ]; then
+        artisan config:clear -q
+    fi
+fi
+
+exec "$@"

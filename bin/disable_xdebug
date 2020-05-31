@@ -1,0 +1,3 @@
+#!/bin/bash
+phpdismod xdebug
+sv restart php-fpm
