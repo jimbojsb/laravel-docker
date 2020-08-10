@@ -4,8 +4,8 @@ ENV PATH $PATH:/app/vendor/bin:/app:/app/node_modules/.bin
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV APP_NAME laravel
 ENV APP_ENV production
-ENV PHP_OPCACHe_ENABLED=1
-ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS=1
+ENV PHP_OPCACHE_ENABLED=1
+ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS=0
 
 EXPOSE 80
 
@@ -60,7 +60,7 @@ COPY etc /etc/
 COPY root /root/
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
+RUN composer config --global repos.packagist composer https://packagist.org
 WORKDIR /app
 
 ONBUILD COPY composer* package* /app/
