@@ -1,6 +1,0 @@
-#! /bin/bash
-ARGS="$*"
-apt-get -q update && apt-get -qy install --no-install-recommends $ARGS \
-    && apt-get -qy autoremove \
-    && apt-get clean \
-    && rm -r /var/lib/apt/lists/*
