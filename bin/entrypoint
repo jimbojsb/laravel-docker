@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+if [ "$APP_ENV" == "production" ]; then
+    # cache laravel config values
+    artisan config:cache -q
+fi

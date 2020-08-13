@@ -9,6 +9,7 @@ ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS=0
 
 EXPOSE 80
 
+ENTRYPOINT ["entrypoint"]
 CMD ["runsvinit"]
 
 COPY etc/apk/repositories /etc/apk/repositories
@@ -69,4 +70,3 @@ ONBUILD RUN npm install
 ONBUILD COPY . /app
 ONBUILD RUN composer -o dump-autoload
 ONBUILD RUN npm run production
-ONBUILD RUN artisan config:cache
