@@ -4,3 +4,4 @@ if [ "$APP_ENV" == "production" ]; then
     # cache laravel config values
     artisan config:cache -q
 fi
+exec "$@" 2>&1
